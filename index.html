@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSPH Probability Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f9f9f9; }
+        .container { max-width: 500px; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; margin-bottom: 20px; }
+        label, input { display: block; width: 100%; margin-bottom: 15px; font-size: 16px; }
+        button { width: 100%; padding: 10px; font-size: 16px; background: #2a9df4; color: white; border: none; border-radius: 5px; }
+        .result { text-align: center; margin-top: 20px; font-size: 18px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>CSPH Risk Calculator</h2>
+        <label for="lsm">Liver Stiffness (LSM_TE in kPa)</label>
+        <input type="number" id="lsm" step="0.1">
+
+        <label for="plt">Platelet Count (PLT ×10<sup>9</sup>/L)</label>
+        <input type="number" id="plt" step="1">
+
+        <label for="ssm">Spleen Stiffness (SSM_TE in kPa)</label>
+        <input type="number" id="ssm" step="0.1">
+
+        <button onclick="calculateRisk()">Calculate Probability</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function calculateRisk() {
+            const lsm = parseFloat(document.getElementById('lsm').value);
+            const plt = parseFloat(document.getElementById('plt').value);
+            const ssm = parseFloat(document.getElementById('ssm').value);
+
+            if (isNaN(lsm) || isNaN(plt) || isNaN(ssm)) {
+                document.getElementById('result').textContent = "Please fill in all values.";
+                return;
+            }
+
+            const logit = -8.7714 + (0.1226 * lsm) + (-0.0217 * plt) + (0.2667 * ssm);
+            const probability = 1 / (1 + Math.exp(-logit));
+            const interpretation = probability >= 0.565 ? "CSPH LIKELY (Rule-In)" : "CSPH UNLIKELY";
+
+            document.getElementById('result').textContent = `Predicted Probability: ${(probability * 100).toFixed(2)}% — ${interpretation}`;
+        }
+    </script>
+</body>
+</html>
